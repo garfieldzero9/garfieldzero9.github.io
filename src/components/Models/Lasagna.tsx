@@ -51,6 +51,13 @@ const Lasagna: React.FC<LasagnaProps> = ({ position, onCatch, onMiss }) => {
                     }
                 }
             }}
+            // Notify when it hits the ground plane
+            onCollisionEnter={({ other }) => {
+                if (other.rigidBodyObject?.name === 'floor' && !hasTriggered.current) {
+                    hasTriggered.current = true;
+                    onMiss();
+                }
+            }}
         >
             <group scale={1.5}>
                 {/* Pasta layer */}

@@ -43,7 +43,7 @@ const GameScene: React.FC<GameSceneProps> = ({ gameState, score, onScore, onGame
             {/* Ground Plane */}
             {isPlaying && (
                 <group position={[0, -6, 0]}>
-                    <RigidBody type="fixed">
+                    <RigidBody type="fixed" name="floor">
                         <mesh receiveShadow>
                             <boxGeometry args={[30, 1, 30]} />
                             <meshStandardMaterial color="#2d6a4f" roughness={0.8} />

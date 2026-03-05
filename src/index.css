@@ -19,8 +19,9 @@ body {
   font-family: 'Inter', -apple-system, sans-serif;
   background-color: var(--dark-accent);
   color: var(--dark-accent);
-  overflow-x: hidden;
-  /* Disable scroll when immersive */
+  overflow: hidden;
+  touch-action: none;
+  /* Disable scroll when immersive and allow canvas to capture all touch */
 }
 
 /* Playful Maximalist Typography */
@@ -228,4 +229,50 @@ h1, h2, h3, .display-font {
   color: var(--cheese-yellow);
   -webkit-text-stroke: 1px var(--dark-accent);
   margin-bottom: 2rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .title-main {
+    font-size: 2.5rem;
+    -webkit-text-stroke: 1px var(--dark-accent);
+  }
+  
+  .ui-content {
+    padding: 1.5rem;
+    border-width: 3px;
+    box-shadow: 8px 8px 0px var(--dark-accent);
+  }
+  
+  .btn-play {
+    font-size: 1.2rem;
+    padding: 0.8rem 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .game-ui {
+    font-size: 1.2rem;
+    top: 10px;
+    left: 10px;
+    padding: 6px 12px;
+  }
+  
+  .btn-back {
+    font-size: 1rem;
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+  }
+
+  .game-over-title {
+    font-size: 3rem;
+  }
+  
+  .game-over-score {
+    font-size: 2rem;
+  }
 }

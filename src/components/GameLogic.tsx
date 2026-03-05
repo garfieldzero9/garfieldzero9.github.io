@@ -30,8 +30,10 @@ const GameLogic: React.FC<GameLogicProps> = ({ isPlaying, onScore, onGameOver })
         if (spawnTimer.current > 1.2) {
             spawnTimer.current = 0;
 
-            // Random X position across a ~20 unit viewport width
-            const x = (Math.random() - 0.5) * 15;
+            // Spawn within the bounds of the viewport to keep them on screen for mobile
+            const viewportWidth = _state.viewport.width;
+            const bounds = (viewportWidth / 2) - 1.5; // Keep away from exact edges
+            const x = (Math.random() - 0.5) * (bounds * 2);
 
             setLasagnas(prev => [...prev.slice(-10), {
                 id: ++currentId.current,

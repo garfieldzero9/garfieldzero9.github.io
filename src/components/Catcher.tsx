@@ -12,14 +12,49 @@ const Catcher: React.FC<CatcherProps> = ({ isPlaying, score }) => {
     const rigidBodyRef = useRef<RapierRigidBody>(null);
     const groupRef = useRef<THREE.Group>(null);
     const prevScore = useRef(score);
+    const keys = useRef({ left: false, right: false });
+    const targetXRef = useRef(0);
+    const lastMouseX = useRef(0);
 
-    useFrame((state) => {
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.current.left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.current.right = true;
+        };
+        const handleKeyUp = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') keys.current.left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd') keys.current.right = false;
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, []);
+
+    useFrame((state, delta) => {
         if (!isPlaying || !rigidBodyRef.current) return;
 
-        // Follow mouse X, but keep Y and Z locked
+        // Hybrid controls: Follow mouse X if it moves, else use keyboard
         const viewportWidth = state.viewport.width;
-        // Un-normalize mouse coordinate (-1 to 1) to viewport units
-        const targetX = (state.pointer.x * viewportWidth) / 2;
+        const currentMouseX = (state.pointer.x * viewportWidth) / 2;
+
+        // If mouse moved significantly, update target to mouse position
+        if (Math.abs(currentMouseX - lastMouseX.current) > 0.05) {
+            targetXRef.current = currentMouseX;
+            lastMouseX.current = currentMouseX;
+        }
+
+        const speed = 25; // Units per second for keyboard
+        if (keys.current.left) targetXRef.current -= speed * delta;
+        if (keys.current.right) targetXRef.current += speed * delta;
+
+        // Clamp to screen
+        const bounds = (viewportWidth / 2) - 1.5;
+        targetXRef.current = THREE.MathUtils.clamp(targetXRef.current, -bounds, bounds);
+
+        const targetX = targetXRef.current;
 
         // Lerp for smooth movement
         const currentTranslation = rigidBodyRef.current.translation();
