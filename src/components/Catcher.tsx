@@ -12,18 +12,31 @@ const Catcher: React.FC<CatcherProps> = ({ isPlaying, score }) => {
     const rigidBodyRef = useRef<RapierRigidBody>(null);
     const groupRef = useRef<THREE.Group>(null);
     const prevScore = useRef(score);
-    const keys = useRef({ left: false, right: false });
+    const keys = useRef({ left: false, right: false, space: false });
     const targetXRef = useRef(0);
     const lastMouseX = useRef(0);
+    const jumpVelocity = useRef(0);
+    const isJumping = useRef(false);
+    const currentY = useRef(-5);
+
+    React.useEffect(() => {
+        if (isPlaying) {
+            currentY.current = -5;
+            jumpVelocity.current = 0;
+            isJumping.current = false;
+        }
+    }, [isPlaying]);
 
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'ArrowLeft' || e.key === 'a') keys.current.left = true;
             if (e.key === 'ArrowRight' || e.key === 'd') keys.current.right = true;
+            if (e.key === ' ' || e.key === 'Spacebar') keys.current.space = true;
         };
         const handleKeyUp = (e: KeyboardEvent) => {
             if (e.key === 'ArrowLeft' || e.key === 'a') keys.current.left = false;
             if (e.key === 'ArrowRight' || e.key === 'd') keys.current.right = false;
+            if (e.key === ' ' || e.key === 'Spacebar') keys.current.space = false;
         };
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
@@ -50,6 +63,32 @@ const Catcher: React.FC<CatcherProps> = ({ isPlaying, score }) => {
         if (keys.current.left) targetXRef.current -= speed * delta;
         if (keys.current.right) targetXRef.current += speed * delta;
 
+        // Jump logic
+        const gravity = -40;
+        const jumpStrength = 15;
+        const groundY = -5;
+
+        if (keys.current.space && !isJumping.current) {
+            jumpVelocity.current = jumpStrength;
+            isJumping.current = true;
+        }
+
+        if (isJumping.current) {
+            jumpVelocity.current += gravity * delta;
+            currentY.current += jumpVelocity.current * delta;
+
+            if (currentY.current <= groundY) {
+                currentY.current = groundY;
+                jumpVelocity.current = 0;
+                isJumping.current = false;
+                
+                // Land squish effect
+                if (groupRef.current) {
+                    groupRef.current.scale.set(1.3, 0.7, 1.3);
+                }
+            }
+        }
+
         // Clamp to screen
         const bounds = (viewportWidth / 2) - 1.5;
         targetXRef.current = THREE.MathUtils.clamp(targetXRef.current, -bounds, bounds);
@@ -62,7 +101,7 @@ const Catcher: React.FC<CatcherProps> = ({ isPlaying, score }) => {
 
         rigidBodyRef.current.setNextKinematicTranslation({
             x: newX,
-            y: -5, // Locked to bottom of screen
+            y: currentY.current,
             z: 0
         });
 
