@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RigidBody, RapierRigidBody, CylinderCollider } from '@react-three/rapier';
+import { RoundedBox, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface CatcherProps {
@@ -132,52 +133,45 @@ const Catcher: React.FC<CatcherProps> = ({ isPlaying, score }) => {
             <CylinderCollider args={[0.5, 1.5]} sensor />
             <group ref={groupRef} position={[0, -0.25, 0]}>
                 {/* Cat Body */}
-                <mesh castShadow receiveShadow position={[0, 0, 0]}>
-                    <boxGeometry args={[2, 1, 1]} />
-                    <meshStandardMaterial color="#fb8b24" roughness={0.4} />
-                </mesh>
+                <RoundedBox args={[2.2, 1.2, 1.2]} radius={0.4} smoothness={4} castShadow receiveShadow position={[0, 0, 0]}>
+                    <meshStandardMaterial color="#fb8b24" roughness={0.3} />
+                </RoundedBox>
 
                 {/* Cat Head */}
-                <mesh castShadow receiveShadow position={[0, 0.75, 0]}>
-                    <boxGeometry args={[1.2, 1, 1.2]} />
-                    <meshStandardMaterial color="#fb8b24" roughness={0.4} />
-                </mesh>
+                <Sphere args={[0.8, 32, 32]} castShadow receiveShadow position={[0, 1.1, 0]}>
+                    <meshStandardMaterial color="#fb8b24" roughness={0.3} />
+                </Sphere>
 
                 {/* Ears */}
-                <mesh castShadow receiveShadow position={[-0.4, 1.3, 0]}>
-                    <boxGeometry args={[0.3, 0.4, 0.3]} />
-                    <meshStandardMaterial color="#fb8b24" roughness={0.4} />
+                <mesh castShadow receiveShadow position={[-0.45, 1.6, 0]} rotation={[0, 0, 0.3]}>
+                    <coneGeometry args={[0.2, 0.5, 16]} />
+                    <meshStandardMaterial color="#fb8b24" roughness={0.3} />
                 </mesh>
-                <mesh castShadow receiveShadow position={[0.4, 1.3, 0]}>
-                    <boxGeometry args={[0.3, 0.4, 0.3]} />
-                    <meshStandardMaterial color="#fb8b24" roughness={0.4} />
+                <mesh castShadow receiveShadow position={[0.45, 1.6, 0]} rotation={[0, 0, -0.3]}>
+                    <coneGeometry args={[0.2, 0.5, 16]} />
+                    <meshStandardMaterial color="#fb8b24" roughness={0.3} />
                 </mesh>
 
                 {/* Eyes */}
-                <group position={[0, 0.8, 0.61]}>
-                    <mesh position={[-0.25, 0, 0]}>
-                        <boxGeometry args={[0.2, 0.2, 0.05]} />
+                <group position={[0, 1.1, 0.65]}>
+                    <Sphere args={[0.12, 16, 16]} position={[-0.25, 0.1, 0]}>
                         <meshBasicMaterial color="#ffffff" />
-                    </mesh>
-                    <mesh position={[0.25, 0, 0]}>
-                        <boxGeometry args={[0.2, 0.2, 0.05]} />
+                    </Sphere>
+                    <Sphere args={[0.12, 16, 16]} position={[0.25, 0.1, 0]}>
                         <meshBasicMaterial color="#ffffff" />
-                    </mesh>
-                    <mesh position={[-0.25, 0, 0.03]}>
-                        <boxGeometry args={[0.1, 0.1, 0.05]} />
+                    </Sphere>
+                    <Sphere args={[0.06, 16, 16]} position={[-0.25, 0.1, 0.08]}>
                         <meshBasicMaterial color="#000000" />
-                    </mesh>
-                    <mesh position={[0.25, 0, 0.03]}>
-                        <boxGeometry args={[0.1, 0.1, 0.05]} />
+                    </Sphere>
+                    <Sphere args={[0.06, 16, 16]} position={[0.25, 0.1, 0.08]}>
                         <meshBasicMaterial color="#000000" />
-                    </mesh>
+                    </Sphere>
                 </group>
 
                 {/* Nose/Mouth */}
-                <mesh castShadow receiveShadow position={[0, 0.5, 0.65]}>
-                    <boxGeometry args={[0.4, 0.2, 0.1]} />
+                <Sphere args={[0.15, 16, 16]} castShadow receiveShadow position={[0, 0.9, 0.72]}>
                     <meshStandardMaterial color="#ffb067" />
-                </mesh>
+                </Sphere>
             </group>
         </RigidBody>
     );

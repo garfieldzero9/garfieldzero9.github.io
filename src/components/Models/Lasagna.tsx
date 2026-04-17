@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RigidBody, RapierRigidBody } from '@react-three/rapier';
+import { RoundedBox } from '@react-three/drei';
 
 interface LasagnaProps {
     position: [number, number, number];
@@ -61,20 +62,17 @@ const Lasagna: React.FC<LasagnaProps> = ({ position, onCatch, onMiss }) => {
         >
             <group scale={1.5}>
                 {/* Pasta layer */}
-                <mesh position={[0, -0.2, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[1, 0.1, 1]} />
-                    <meshStandardMaterial color="#f4d03f" roughness={0.3} />
-                </mesh>
+                <RoundedBox args={[1.2, 0.15, 1.2]} radius={0.1} smoothness={10} position={[0, -0.2, 0]} castShadow receiveShadow>
+                    <meshStandardMaterial color="#f4d03f" roughness={0.4} />
+                </RoundedBox>
                 {/* Meat/Sauce layer */}
-                <mesh position={[0, 0, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[0.9, 0.2, 0.9]} />
+                <RoundedBox args={[1.1, 0.25, 1.1]} radius={0.1} smoothness={10} position={[0, 0, 0]} castShadow receiveShadow>
                     <meshStandardMaterial color="#e63946" roughness={0.6} />
-                </mesh>
+                </RoundedBox>
                 {/* Cheese layer */}
-                <mesh position={[0, 0.2, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[0.95, 0.1, 0.95]} />
-                    <meshStandardMaterial color="#ffea00" roughness={0.1} metalness={0.1} />
-                </mesh>
+                <RoundedBox args={[1.15, 0.15, 1.15]} radius={0.1} smoothness={10} position={[0, 0.2, 0]} castShadow receiveShadow>
+                    <meshStandardMaterial color="#ffea00" roughness={0.2} metalness={0.1} />
+                </RoundedBox>
             </group>
         </RigidBody>
     );

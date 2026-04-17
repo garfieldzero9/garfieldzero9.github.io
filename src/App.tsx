@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import UIOverlay from './components/UIOverlay.tsx';
 import GameScene from './components/GameScene.tsx';
@@ -9,6 +9,7 @@ function App() {
   const [gameState, setGameState] = useState<GameState>('home');
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const savedScore = localStorage.getItem('garfield_high_score');
@@ -16,6 +17,17 @@ function App() {
       setHighScore(parseInt(savedScore, 10));
     }
   }, []);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (gameState === 'playing') {
+        audioRef.current.play().catch(e => console.log("Audio play blocked by browser. User must interact first.", e));
+      } else {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    }
+  }, [gameState]);
 
   const checkHighScore = (currentScore: number) => {
     if (currentScore > highScore) {
@@ -48,6 +60,8 @@ function App() {
         highScore={highScore}
         onBackToHome={handleBackToHome}
       />
+
+      <audio ref={audioRef} src="/bgm.mp3" loop />
 
       <div className="canvas-container">
         <Canvas
